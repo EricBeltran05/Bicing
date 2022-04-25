@@ -5,7 +5,8 @@
  */
 package bicing.mappings;
 
-import bicing.models.Station;
+import bicing.models.Information;
+import bicing.models.Json;
 import bicing.models.Status;
 import java.util.Arrays;
 import java.util.List;
@@ -17,17 +18,24 @@ import org.bson.Document;
  */
 public class StationMapping {
 
-    public static Document setStationToDocument(Station s) {
-        Document doc = new Document("station_id", s.getStation_id())
-                .append("name", s.getName())
-                .append("physical_configuration", s.getPhysical_configuration())
-                .append("lat", s.getLat())
-                .append("lon", s.getLon())
-                .append("altitude", s.getAltitude())
-                .append("address", s.getAddress())
-                .append("post_code", s.getPost_code())
-                .append("capacity", s.getCapacity())
-                .append("nearby_distance", s.getNearby_distance());
+    public static Document setStationToDocument(Information i) {
+        Document doc = new Document("station_id", i.getStation_id())
+                .append("name", i.getName())
+                .append("physical_configuration", i.getPhysical_configuration())
+                .append("lat", i.getLat())
+                .append("lon", i.getLon())
+                .append("altitude", i.getAltitude())
+                .append("address", i.getAddress())
+                .append("post_code", i.getPost_code())
+                .append("capacity", i.getCapacity())
+                .append("nearby_distance", i.getNearby_distance());
+        return doc;
+    }
+
+    public static Document setStationToDocument(Json j) {
+        Document doc = new Document("data", j.getData())
+                .append("stations", Arrays.asList(
+                        j.getData().getInformation().toString()));
         return doc;
     }
 
@@ -47,8 +55,8 @@ public class StationMapping {
         return doc;
     }
 
-    public static Station getStationFromDocument(Document doc) {
-        Station s = new Station();
+    public static Information getStationFromDocument(Document doc) {
+        Information s = new Information();
         s.setStation_id(doc.getInteger("station_id"));
         s.setName(doc.getString("name"));
         s.setPhysical_configuration(doc.getString("physical_configuration"));

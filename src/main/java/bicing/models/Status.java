@@ -44,6 +44,7 @@ public class Status implements Serializable {
             int is_renting,
             int is_returning,
             int traffic) {
+        
         this.station_id = station_id;
         this.num_bikes_available = num_bikes_available;
         this.num_docks_available = num_docks_available;
@@ -56,16 +57,10 @@ public class Status implements Serializable {
         this.traffic = traffic;
     }
 
-    /**
-     * @return the station_id
-     */
     public int getStation_id() {
         return station_id;
     }
 
-    /**
-     * @param station_id the station_id to set
-     */
     public void setStation_id(int station_id) {
         this.station_id = station_id;
     }
