@@ -5,10 +5,8 @@
  */
 package bicing.mappings;
 
-import bicing.models.Information;
-import bicing.models.Json;
-import bicing.models.Status;
-import java.util.Arrays;
+import bicing.models.Data;
+import bicing.models.Station;
 import java.util.List;
 import org.bson.Document;
 
@@ -18,45 +16,15 @@ import org.bson.Document;
  */
 public class StationMapping {
 
-    public static Document setStationToDocument(Information i) {
-        Document doc = new Document("station_id", i.getStation_id())
-                .append("name", i.getName())
-                .append("physical_configuration", i.getPhysical_configuration())
-                .append("lat", i.getLat())
-                .append("lon", i.getLon())
-                .append("altitude", i.getAltitude())
-                .append("address", i.getAddress())
-                .append("post_code", i.getPost_code())
-                .append("capacity", i.getCapacity())
-                .append("nearby_distance", i.getNearby_distance());
+    public static Document setDataToDocument(Station s) {
+        Document doc = new Document("last_updated", s.getLast_updated())
+                .append("ttl", s.getTtl())
+                .append("data", s.getStations().getStations());
         return doc;
     }
 
-    public static Document setStationToDocument(Json j) {
-        Document doc = new Document("data", j.getData())
-                .append("stations", Arrays.asList(
-                        j.getData().getInformation().toString()));
-        return doc;
-    }
-
-    public static Document setStatusToDocument(Status st) {
-        Document doc = new Document("station_id", st.getStation_id())
-                .append("num_bikes_available", st.getNum_bikes_available())
-                .append("num_bikes_available_types", Arrays.asList(
-                        st.getMechanical(), st.getEbike()))
-                .append("num_docks_available", st.getNum_docks_available())
-                .append("last_reported", st.getLast_reported())
-                .append("is_charging_station", st.isIs_charging_station())
-                .append("status", st.getStatus())
-                .append("is_installed", st.getIs_installed())
-                .append("is_renting", st.getIs_renting())
-                .append("is_returning", st.getIs_returning())
-                .append("traffic", st.getTraffic());
-        return doc;
-    }
-
-    public static Information getStationFromDocument(Document doc) {
-        Information s = new Information();
+    public static Data getStationFromDocument(Document doc) {
+        Data s = new Data();
         s.setStation_id(doc.getInteger("station_id"));
         s.setName(doc.getString("name"));
         s.setPhysical_configuration(doc.getString("physical_configuration"));
@@ -70,7 +38,7 @@ public class StationMapping {
         return s;
     }
 
-    public static Status getStatusFromDocument(Document doc) {
+    /*public static Status getStatusFromDocument(Document doc) {
         Status st = new Status();
         st.setStation_id(doc.getInteger("station_id"));
         st.setNum_bikes_available(doc.getInteger("num_bikes_available"));
@@ -86,6 +54,6 @@ public class StationMapping {
         st.setIs_returning(doc.getInteger("is_returning"));
         st.setTraffic(doc.getInteger("traffic"));
         return st;
-    }
+    }*/
 
 }

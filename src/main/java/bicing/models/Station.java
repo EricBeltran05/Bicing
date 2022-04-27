@@ -5,54 +5,68 @@
  */
 package bicing.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 /**
  *
  * @author eric_
  */
-public class Station {
+public class Station implements Serializable {
 
-    private List<Information> stations;
-    private List<Status> statusList;
+    private int last_updated;
+    private int ttl;
+    private Data data;
 
     public Station() {
-        stations = new ArrayList<>();
-        statusList = new ArrayList<>();
+    }
+
+    public Station(int last_updated, int ttl, Data data) {
+        this.last_updated = last_updated;
+        this.ttl = ttl;
+        this.data = data;
+
     }
 
     /**
-     * @return the stations
+     * @return the last_updated
      */
-    public List<Information> getInformation() {
-        return stations;
+    public int getLast_updated() {
+        return last_updated;
     }
 
     /**
-     * @param information the stations to set
+     * @param last_updated the last_updated to set
      */
-    public void setInformation(List<Information> information) {
-        this.stations = information;
+    public void setLast_updated(int last_updated) {
+        this.last_updated = last_updated;
     }
 
     /**
-     * @return the status
+     * @return the ttl
      */
-    public List<Status> getStatusList() {
-        return statusList;
+    public int getTtl() {
+        return ttl;
     }
 
     /**
-     * @param statusList the status to set
+     * @param ttl the ttl to set
      */
-    public void setStatusList(List<Status> statusList) {
-        this.statusList = statusList;
+    public void setTtl(int ttl) {
+        this.ttl = ttl;
+    }
+
+    public Data getStations() {
+        return data;
+    }
+
+    public void setStations(Data stations) {
+        this.data = stations;
     }
 
     @Override
     public String toString() {
-        return "Stations: " + stations;
+        return "last updated: " + last_updated + ", ttl: " + ttl + ", data: " + data;
+        //return "Stations{ " + "Info: " + data + ", Status: " + dataStatus;
     }
 
 }

@@ -1,0 +1,2 @@
+
+url = https://api.bsmsa.eu/ext/api/bsm/gbfs/v2/en/station_status

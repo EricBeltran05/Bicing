@@ -6,22 +6,28 @@
 package bicing;
 
 import bicing.mappings.StationMapping;
-import bicing.models.Information;
-import bicing.models.Json;
 import bicing.models.Station;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Scanner;
 import org.bson.Document;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import static com.mongodb.client.model.Filters.eq;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Properties;
+import com.google.gson.Gson;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  *
@@ -34,9 +40,15 @@ public class App {
      */
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Station id: ");
-        String _id = "6262af70ba5576d88b9f5a44";
+        Properties defaultProps = new Properties();
+        InputStream in = App.class.getClassLoader()
+                .getResourceAsStream("defaultProperties.txt");
+        try {
+            defaultProps.load(in);
+            downloadFile(defaultProps.getProperty("url"));
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
 
         //File f = new File(getClass().getResource("/resources/station_information.json").getFile());
         //URL url = App.class.getClass().getResource("/resources/station_information.json");
@@ -51,32 +63,48 @@ public class App {
         MongoDatabase bbdd = mongoClient.getDatabase("Bicing");
 
         //Agafem la coleccio amb la que volem veure els seus documents
-        MongoCollection<Document> station = bbdd.getCollection("station_information");
+        MongoCollection<Document> station_info = bbdd.getCollection("station_information");
+        MongoCollection<Document> station_status = bbdd.getCollection("station_status");
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
 
         try {
-            
-            Document doc = station.find().first();
 
-            Information stationJSON = gson.fromJson(new FileReader("station_information.json"), Information.class);
+            Station s_info = gson.fromJson(new FileReader("station_information.json"), Station.class);
+            station_info.insertOne(StationMapping.setDataToDocument(s_info));
 
-            Station a = gson.fromJson(new FileReader("station_information.json"), Station.class);
+            Station s_status = gson.fromJson(new FileReader("station_status.json"), Station.class);
+            station_status.insertOne(StationMapping.setDataToDocument(s_status));
 
-            
-            
-            Json j = gson.fromJson(new FileReader("station_information.json"), Json.class);
-
-            System.out.println(j);
-            
-            station.insertOne(StationMapping.setStationToDocument(j));
-
-            //station.insertOne(StationMapping.setStationToDocument(stationJSON));
-            //System.out.println(StationMapping.setStationToDocument(stationJSON));
+            //station.insertOne(StationMapping.setStationToDocument(j));
+            //station.insertOne(StationMapping.setStationToDocument(s.getStations()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private static void downloadFile(String url) {
+        try {
+            InputStream is = new URL(url).openStream();
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is, Charset.forName("UTF-8"))
+            );
+            String line;
+            FileWriter flux = new FileWriter("station_status.json");
+            BufferedWriter file = new BufferedWriter(flux);
+            while ((line = reader.readLine()) != null) {
+                file.write(line);
+                file.newLine();
+            }
+            file.close();
+            is.close();
+        } catch (MalformedURLException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
         }
 
     }
