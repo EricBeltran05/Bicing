@@ -97,9 +97,8 @@ public class Data implements Serializable {
         this.is_returning = is_returning;
         this.traffic = traffic;
     }
-    
-    //Information
 
+    //Information
     public List getStations() {
         return stations;
     }
@@ -241,9 +240,8 @@ public class Data implements Serializable {
     public void setNearby_distance(int nearby_distance) {
         this.nearby_distance = nearby_distance;
     }
-    
-    //Status
 
+    //Status
     public int getNum_bikes_available() {
         return num_bikes_available;
     }
@@ -339,12 +337,9 @@ public class Data implements Serializable {
     public void setTraffic(int traffic) {
         this.traffic = traffic;
     }
-    
-    
 
     @Override
     public String toString() {
         return "stations{ " + stations;
-        //return station_id + " " + name + " " + physical_configuration + " " + lat + " " + lon + " " + altitude + " " + address + " " + post_code + " " + capacity + " " + nearby_distance + " ";
     }
 }

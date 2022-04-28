@@ -7,8 +7,12 @@ package bicing.mappings;
 
 import bicing.models.Data;
 import bicing.models.Station;
+import com.google.gson.reflect.TypeToken;
+import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 
 /**
  *
@@ -38,22 +42,49 @@ public class StationMapping {
         return s;
     }
 
-    /*public static Status getStatusFromDocument(Document doc) {
-        Status st = new Status();
-        st.setStation_id(doc.getInteger("station_id"));
-        st.setNum_bikes_available(doc.getInteger("num_bikes_available"));
-        List types = (List<?>) doc.get("num_bikes_available_types");
+    public static Station getStatusFromDocument(Document doc) {
+        Station s = new Station();
+
+        s.setLast_updated(doc.getInteger("last_updated"));
+        s.setTtl(doc.getInteger("ttl"));
+
+        List data = (List<?>) doc.get("data");
+
+        System.out.println("VEAMOS EL DOC " + doc);
+        System.out.println("ANTES DEL SET " + s.getStations());
+
+//        s.getStations().setStations(data);
+        System.out.println("IIIIIIIIIIIIIIIIIII " + s);
+
+        Data st = new Data();
+
+        //s.setStations(doc.get("data"));
+        //List<Data> ds = new ArrayList(Arrays.asList(st));
+        List stations = (List<?>) doc.get("stations");
+
+        System.out.println("OOOOOOOOOOOOOO " + stations);
+
+        st.setStation_id((int) stations.get(0));
+        st.setNum_bikes_available((int) stations.get(1));
+
+        st.setNum_bikes_available_types((List) stations.get(2));
+
+        List types = (List<?>) stations.subList(0, 1);
         st.setMechanical((int) types.get(0));
         st.setEbike((int) types.get(1));
-        st.setNum_docks_available(doc.getInteger("num_docks_available"));
-        st.setLast_reported(doc.getInteger("last_reported"));
-        st.setIs_charging_station(doc.getBoolean("is_charging_station"));
-        st.setStatus(doc.getString("status"));
-        st.setIs_installed(doc.getInteger("is_installed"));
-        st.setIs_renting(doc.getInteger("is_renting"));
-        st.setIs_returning(doc.getInteger("is_returning"));
-        st.setTraffic(doc.getInteger("traffic"));
-        return st;
-    }*/
+
+        st.setNum_docks_available((int) stations.get(3));
+        st.setLast_reported((int) stations.get(4));
+        st.setIs_charging_station((boolean) stations.get(5));
+        st.setStatus((String) stations.get(6));
+        st.setIs_installed((int) stations.get(7));
+        st.setIs_renting((int) stations.get(8));
+        st.setIs_returning((int) stations.get(9));
+        st.setTraffic((int) stations.get(10));
+
+        s.setStations(st);
+
+        return s;
+    }
 
 }

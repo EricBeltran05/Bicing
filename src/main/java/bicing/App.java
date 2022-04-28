@@ -6,6 +6,7 @@
 package bicing;
 
 import bicing.mappings.StationMapping;
+import bicing.models.Data;
 import bicing.models.Station;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -26,8 +27,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Properties;
 import com.google.gson.Gson;
+import static com.mongodb.client.model.Filters.eq;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -46,47 +50,17 @@ public class App {
         try {
             defaultProps.load(in);
             downloadFile(defaultProps.getProperty("url"));
+
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
 
-        //File f = new File(getClass().getResource("/resources/station_information.json").getFile());
-        //URL url = App.class.getClass().getResource("/resources/station_information.json");
-        //URI Connexió BBDD
-        MongoClientURI connectionString = new MongoClientURI(
-                "mongodb://localhost:27017"
-        );
-
-        //Creació client (es  a dir, connectem)
-        MongoClient mongoClient = new MongoClient(connectionString);
-
-        MongoDatabase bbdd = mongoClient.getDatabase("Bicing");
-
-        //Agafem la coleccio amb la que volem veure els seus documents
-        MongoCollection<Document> station_info = bbdd.getCollection("station_information");
-        MongoCollection<Document> station_status = bbdd.getCollection("station_status");
-
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
-
-        try {
-
-            Station s_info = gson.fromJson(new FileReader("station_information.json"), Station.class);
-            station_info.insertOne(StationMapping.setDataToDocument(s_info));
-
-            Station s_status = gson.fromJson(new FileReader("station_status.json"), Station.class);
-            station_status.insertOne(StationMapping.setDataToDocument(s_status));
-
-            //station.insertOne(StationMapping.setStationToDocument(j));
-            //station.insertOne(StationMapping.setStationToDocument(s.getStations()));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        loadInfo();
+        updateStatus();
     }
 
     private static void downloadFile(String url) {
+
         try {
             InputStream is = new URL(url).openStream();
             BufferedReader reader = new BufferedReader(
@@ -95,18 +69,85 @@ public class App {
             String line;
             FileWriter flux = new FileWriter("station_status.json");
             BufferedWriter file = new BufferedWriter(flux);
+
             while ((line = reader.readLine()) != null) {
                 file.write(line);
                 file.newLine();
+
             }
+
             file.close();
             is.close();
+
         } catch (MalformedURLException ex) {
             System.err.println(ex.getMessage());
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
 
+    }
+
+    private static void updateStatus() {
+
+        //URI Connexió BBDD
+        MongoClientURI connectionString = new MongoClientURI(
+                "mongodb://localhost:27017"
+        );
+
+        MongoClient mongoClient = new MongoClient(connectionString);
+
+        MongoDatabase bbdd = mongoClient.getDatabase("Bicing");
+
+        MongoCollection<Document> station_status = bbdd.getCollection("station_status");
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        try {
+
+            Document doc = station_status.find().first();
+            Station status_api = gson.fromJson(new FileReader("station_status.json"), Station.class);
+
+            if (doc == null) {
+
+                station_status.insertOne(StationMapping.setDataToDocument(status_api));
+            } else {
+                int last_upd = doc.getInteger("last_updated");
+                station_status.updateOne(eq("last_updated", last_upd), new Document("$set", StationMapping.setDataToDocument(status_api)));
+
+            }
+        } catch (NullPointerException | FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private static void loadInfo() {
+        //URI Connexió BBDD
+        MongoClientURI connectionString = new MongoClientURI(
+                "mongodb://localhost:27017"
+        );
+
+        MongoClient mongoClient = new MongoClient(connectionString);
+
+        MongoDatabase bbdd = mongoClient.getDatabase("Bicing");
+
+        MongoCollection<Document> station_info = bbdd.getCollection("station_information");
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        try {
+
+            Document doc = station_info.find().first();
+            Station s_info = gson.fromJson(new FileReader("station_information.json"), Station.class);
+
+            if (doc == null) {
+                station_info.insertOne(StationMapping.setDataToDocument(s_info));
+            }
+
+        } catch (NullPointerException | FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 
 }
