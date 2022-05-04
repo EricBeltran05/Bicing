@@ -6,7 +6,9 @@
 package bicing.mappings;
 
 import bicing.models.Data;
-import bicing.models.Station;
+import bicing.models.Json;
+import bicing.models.StationInformation;
+import bicing.models.StationStatus;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,69 +22,80 @@ import java.util.Arrays;
  */
 public class StationMapping {
 
-    public static Document setDataToDocument(Station s) {
+    public static Document setDataToDocument(Json s) {
+
+        Document doc = new Document("last_updated", s.getLast_updated())
+                .append("ttl", s.getTtl())
+                .append("data", s.getStations().getStations());
+
+        return doc;
+    }
+
+    /*Arrays.asList(
+                        s.getStations().getStation_id(),
+                        s.getStations().getName(),
+                        s.getStations().getPhysical_configuration(),
+                        s.getStations().getLat(),
+                        s.getStations().getLon(),
+                        s.getStations().getAltitude(),
+                        s.getStations().getAddress(),
+                        s.getStations().getPost_code(),
+                        s.getStations().getCapacity(),
+                        s.getStations().getNearby_distance())*/
+ /*public static Document setDataToDocument(Json s) {
         Document doc = new Document("last_updated", s.getLast_updated())
                 .append("ttl", s.getTtl())
                 .append("data", s.getStations().getStations());
         return doc;
-    }
-
-    public static Data getStationFromDocument(Document doc) {
-        Data s = new Data();
+    }*/
+    public static StationInformation getStationFromDocument(Document doc) {
+        StationInformation s = new StationInformation();
         s.setStation_id(doc.getInteger("station_id"));
         s.setName(doc.getString("name"));
         s.setPhysical_configuration(doc.getString("physical_configuration"));
         s.setLat(doc.getDouble("lat"));
         s.setLon(doc.getDouble("lon"));
-        s.setAltitude(doc.getInteger("altitude"));
+        s.setAltitude(doc.getDouble("altitude"));
         s.setAddress(doc.getString("address"));
         s.setPost_code(doc.getString("post_code"));
         s.setCapacity(doc.getInteger("capacity"));
-        s.setNearby_distance(doc.getInteger("nearby_distance"));
+        s.setNearby_distance(doc.getDouble("nearby_distance"));
         return s;
     }
 
-    public static Station getStatusFromDocument(Document doc) {
-        Station s = new Station();
+    public static StationStatus getStatusFromDocument(Document doc) {
 
-        s.setLast_updated(doc.getInteger("last_updated"));
-        s.setTtl(doc.getInteger("ttl"));
+        StationStatus s = new StationStatus();
 
-        List data = (List<?>) doc.get("data");
+        /*s.setStations(obj);
 
-        System.out.println("VEAMOS EL DOC " + doc);
-        System.out.println("ANTES DEL SET " + s.getStations());
+        for(){
+            
+        }*/
+        List<Data> a = new ArrayList();
 
-//        s.getStations().setStations(data);
-        System.out.println("IIIIIIIIIIIIIIIIIII " + s);
+        //a.add(doc.get("data"));
+        List stations = (List<?>) doc.get("data");
 
-        Data st = new Data();
+        System.out.println("OOOOOOOOOOOOOO " + a);
 
-        //s.setStations(doc.get("data"));
-        //List<Data> ds = new ArrayList(Arrays.asList(st));
-        List stations = (List<?>) doc.get("stations");
+        s.setStation_id((int) stations.get(0));
+        s.setNum_bikes_available((int) stations.get(1));
 
-        System.out.println("OOOOOOOOOOOOOO " + stations);
-
-        st.setStation_id((int) stations.get(0));
-        st.setNum_bikes_available((int) stations.get(1));
-
-        st.setNum_bikes_available_types((List) stations.get(2));
+        //s.setNum_bikes_available_types((List) stations.get(2));
 
         List types = (List<?>) stations.subList(0, 1);
-        st.setMechanical((int) types.get(0));
-        st.setEbike((int) types.get(1));
+        s.getNum_bikes_available_types().setMechanical((int) types.get(0));
+        s.getNum_bikes_available_types().setEbike((int) types.get(1));
 
-        st.setNum_docks_available((int) stations.get(3));
-        st.setLast_reported((int) stations.get(4));
-        st.setIs_charging_station((boolean) stations.get(5));
-        st.setStatus((String) stations.get(6));
-        st.setIs_installed((int) stations.get(7));
-        st.setIs_renting((int) stations.get(8));
-        st.setIs_returning((int) stations.get(9));
-        st.setTraffic((int) stations.get(10));
-
-        s.setStations(st);
+        s.setNum_docks_available((int) stations.get(3));
+        s.setLast_reported((int) stations.get(4));
+        s.setIs_charging_station((boolean) stations.get(5));
+        s.setStatus((String) stations.get(6));
+        s.setIs_installed((int) stations.get(7));
+        s.setIs_renting((int) stations.get(8));
+        s.setIs_returning((int) stations.get(9));
+        s.setTraffic((int) stations.get(10));
 
         return s;
     }

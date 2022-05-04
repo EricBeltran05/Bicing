@@ -12,16 +12,16 @@ import java.util.List;
  *
  * @author eric_
  */
-public class Station implements Serializable {
+public class Json implements Serializable {
 
     private int last_updated;
     private int ttl;
     private Data data;
 
-    public Station() {
+    public Json() {
     }
 
-    public Station(int last_updated, int ttl, Data data) {
+    public Json(int last_updated, int ttl, Data data) {
         this.last_updated = last_updated;
         this.ttl = ttl;
         this.data = data;

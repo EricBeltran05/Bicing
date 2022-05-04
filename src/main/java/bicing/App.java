@@ -7,7 +7,7 @@ package bicing;
 
 import bicing.mappings.StationMapping;
 import bicing.models.Data;
-import bicing.models.Station;
+import bicing.models.Json;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -27,10 +27,16 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Properties;
 import com.google.gson.Gson;
+import com.mongodb.client.MongoCursor;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.lt;
+import com.mongodb.client.model.IndexOptions;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.bson.types.ObjectId;
 
 /**
@@ -56,7 +62,8 @@ public class App {
         }
 
         loadInfo();
-        updateStatus();
+        //updateStatus();
+
     }
 
     private static void downloadFile(String url) {
@@ -106,7 +113,9 @@ public class App {
         try {
 
             Document doc = station_status.find().first();
-            Station status_api = gson.fromJson(new FileReader("station_status.json"), Station.class);
+            Json status_api = gson.fromJson(new FileReader("station_status.json"), Json.class);
+
+            StationMapping.getStatusFromDocument(doc);
 
             if (doc == null) {
 
@@ -133,18 +142,27 @@ public class App {
 
         MongoCollection<Document> station_info = bbdd.getCollection("station_information");
 
+
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
         try {
 
             Document doc = station_info.find().first();
-            Station s_info = gson.fromJson(new FileReader("station_information.json"), Station.class);
+
+            Json s_info = gson.fromJson(new FileReader("station_information.json"), Json.class);
 
             if (doc == null) {
+                
+                List<Document> stationsDocs = new ArrayList<>();
+                stationsDocs.add(StationMapping.setDataToDocument(s_info));
+                
+                
                 station_info.insertOne(StationMapping.setDataToDocument(s_info));
+                //station_info.insertMany(stationsDocs);
             }
 
+            //StationMapping.getStatusFromDocument(doc);
         } catch (NullPointerException | FileNotFoundException ex) {
             System.err.println(ex.getMessage());
         }
