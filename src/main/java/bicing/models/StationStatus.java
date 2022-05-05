@@ -141,7 +141,20 @@ public class StationStatus implements Serializable {
     public void setTraffic(Object traffic) {
         this.traffic = traffic;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Station{ " + "station_id: " + station_id
+                + ", num_bikes_available: " + num_bikes_available
+                + ", num_bikes_available_types: " + num_bikes_available_types
+                + ", num_docks_available: " + num_docks_available
+                + ", last_reported: " + last_reported
+                + ", is_charging_station: " + is_charging_station
+                + ", status: " + status
+                + ", is_installed: " + is_installed
+                + ", is_renting: " + is_renting
+                + ", is_returning" + is_returning
+                + ", traffic: " + traffic + " }";
+    }
 
 }

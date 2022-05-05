@@ -7,22 +7,21 @@ package bicing.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-import org.bson.Document;
 
 /**
  *
  * @author eric_
  */
-public class Data implements Serializable {
-
+public class DataInformation implements Serializable {
+  
     private ArrayList<StationInformation> stations;
 
-    public Data() {
+    public DataInformation() {
         this.stations = new ArrayList();
+       
     }
 
-    public List<StationInformation> getStations() {
+    public ArrayList<StationInformation> getStations() {
         return stations;
     }
 

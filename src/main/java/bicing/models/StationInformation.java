@@ -27,8 +27,6 @@ public class StationInformation implements Serializable {
     private int capacity;
     private double nearby_distance;
 
-    
-
     public StationInformation() {
 
     }
@@ -56,8 +54,6 @@ public class StationInformation implements Serializable {
         this.capacity = capacity;
         this.nearby_distance = nearby_distance;
     }
-
-    
 
     public int getStation_id() {
         return station_id;
@@ -192,8 +188,6 @@ public class StationInformation implements Serializable {
     public void setNearby_distance(Double nearby_distance) {
         this.nearby_distance = nearby_distance;
     }
-
-    
 
     @Override
     public String toString() {

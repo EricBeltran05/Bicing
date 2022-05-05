@@ -40,4 +40,10 @@ public class NumBikesAvailableTypes implements Serializable {
         this.ebike = ebike;
     }
 
+    @Override
+    public String toString() {
+        return "{ mechanical: " + mechanical
+                + ", ebike: " + ebike + " }";
+    }
+
 }

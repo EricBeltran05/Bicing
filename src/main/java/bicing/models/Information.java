@@ -12,16 +12,16 @@ import java.util.List;
  *
  * @author eric_
  */
-public class Json implements Serializable {
+public class Information implements Serializable {
 
     private int last_updated;
     private int ttl;
-    private Data data;
+    private DataInformation data;
 
-    public Json() {
+    public Information() {
     }
 
-    public Json(int last_updated, int ttl, Data data) {
+    public Information(int last_updated, int ttl, DataInformation data) {
         this.last_updated = last_updated;
         this.ttl = ttl;
         this.data = data;
@@ -56,17 +56,17 @@ public class Json implements Serializable {
         this.ttl = ttl;
     }
 
-    public Data getStations() {
+    public DataInformation getStations() {
         return data;
     }
 
-    public void setStations(Data stations) {
-        this.data = stations;
+    public void setStations(DataInformation data) {
+        this.data = data;
     }
 
     @Override
     public String toString() {
-        return "last updated: " + last_updated + ", ttl: " + ttl + ", data: " + data;
+        return "last_updated: " + last_updated + ", ttl: " + ttl + ", data: " + data;
         //return "Stations{ " + "Info: " + data + ", Status: " + dataStatus;
     }
 

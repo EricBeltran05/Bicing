@@ -6,8 +6,8 @@
 package bicing;
 
 import bicing.mappings.StationMapping;
-import bicing.models.Data;
-import bicing.models.Json;
+import bicing.models.Information;
+import bicing.models.Status;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -15,8 +15,6 @@ import com.mongodb.client.MongoDatabase;
 import java.io.FileNotFoundException;
 import org.bson.Document;
 import com.google.gson.GsonBuilder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -27,17 +25,9 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Properties;
 import com.google.gson.Gson;
-import com.mongodb.client.MongoCursor;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.lt;
-import com.mongodb.client.model.IndexOptions;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.bson.types.ObjectId;
 
 /**
  *
@@ -62,7 +52,7 @@ public class App {
         }
 
         loadInfo();
-        //updateStatus();
+        updateStatus();
 
     }
 
@@ -113,13 +103,11 @@ public class App {
         try {
 
             Document doc = station_status.find().first();
-            Json status_api = gson.fromJson(new FileReader("station_status.json"), Json.class);
-
-            StationMapping.getStatusFromDocument(doc);
-
+            Status status_api = gson.fromJson(new FileReader("station_status.json"), Status.class);
             if (doc == null) {
 
                 station_status.insertOne(StationMapping.setDataToDocument(status_api));
+
             } else {
                 int last_upd = doc.getInteger("last_updated");
                 station_status.updateOne(eq("last_updated", last_upd), new Document("$set", StationMapping.setDataToDocument(status_api)));
@@ -142,7 +130,6 @@ public class App {
 
         MongoCollection<Document> station_info = bbdd.getCollection("station_information");
 
-
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
@@ -150,19 +137,13 @@ public class App {
 
             Document doc = station_info.find().first();
 
-            Json s_info = gson.fromJson(new FileReader("station_information.json"), Json.class);
+            Information s_info = gson.fromJson(new FileReader("station_information.json"), Information.class);
 
             if (doc == null) {
-                
-                List<Document> stationsDocs = new ArrayList<>();
-                stationsDocs.add(StationMapping.setDataToDocument(s_info));
-                
-                
                 station_info.insertOne(StationMapping.setDataToDocument(s_info));
-                //station_info.insertMany(stationsDocs);
+
             }
 
-            //StationMapping.getStatusFromDocument(doc);
         } catch (NullPointerException | FileNotFoundException ex) {
             System.err.println(ex.getMessage());
         }
