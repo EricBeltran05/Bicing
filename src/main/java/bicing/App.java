@@ -250,6 +250,8 @@ public class App {
             }
         }
     }
+    
+    //Font: https://www.techiedelight.com/sort-list-of-objects-using-comparator-java/
 
     private static void propLliures(boolean bicis) {
         sc.nextLine();
