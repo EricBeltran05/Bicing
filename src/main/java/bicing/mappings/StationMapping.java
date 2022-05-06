@@ -8,7 +8,6 @@ package bicing.mappings;
 import bicing.models.Information;
 import bicing.models.Status;
 import com.google.gson.Gson;
-import java.util.ArrayList;
 import org.bson.Document;
 
 /**
@@ -31,6 +30,11 @@ public class StationMapping {
         String root = gson.toJson(s);
 
         return Document.parse(root);
+    }
+
+    public static Status getDataFromDocument(Status s) {
+        
+        return s;
     }
 
 }
